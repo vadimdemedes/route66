@@ -1,0 +1,22 @@
+{
+	"name": "route66",
+	"version": "0.1.0",
+	"author": "Vadim Demedes <sbioko@gmail.com>",
+	"description": "Routing functionality/middleware for Connect 2.0",
+	"main": "./index.js",
+	"keywords": ["route", "connect", "routes", "routing"],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/vdemedes/route66.git"
+	},
+	"license": "MIT",
+	"engine": {
+		"node": ">=0.4"
+	},
+	"devDependencies": {
+		"connect": "2.0.2"
+	},
+	"dependencies": {
+		"async": "*"
+	}
+}
