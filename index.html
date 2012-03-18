@@ -1,1 +1,48 @@
-My github page
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Route66 - Routing middleware for Connect 2.0</title>
+	<link href="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css" rel="stylesheet">
+	<link href="stylesheets/bootstrap.min.css" rel="stylesheet">
+</head>
+<body onload="prettyPrint()">
+	<div class="container">
+		<h1>Route66</h1>
+		<a class="btn btn-primary" href="http://search.npmjs.org/#/route66">NPM</a>
+		<a class="btn btn-info" href="https://github.com/vdemedes/route66">Github</a>
+		<a class="btn" href="http://twitter.com/vdemedes">Twitter</a>
+		<hr>
+		<p>
+			Route66 was created to replace good old and <i>removed</i> connect.router middleware for Connect. It offers simple route declaration, in-place middleware support and declaring params in requests.
+		</p>
+		<h2>Installation</h2>
+		<code>npm install route66</code>
+		<h2>Usage</h2>
+		<pre class="prettyprint linenums">
+connect = require 'connect'
+router = require 'route66'
+app = do connect
+
+router.get '/', (req, res) -> # just a simple route
+	do res.end
+
+router.get '/new', (req, res, next) -> # route with middleware
+	do next
+, (req, res) ->
+	do res.end
+
+router.post '/', (req, res) -> # POST, this time
+	do res.end
+
+router.get '/:id', (req, res) -> # request with parameters
+	# req.params.id
+	do res.end
+
+app.use router
+app.listen 3000
+</pre>
+	</div>
+	<script src="scripts/prettify.js"></script>
+</body>
+</html>
