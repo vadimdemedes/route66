@@ -39,14 +39,15 @@ toArray = (object) ->
 routes = {}
 methods = ['get', 'post', 'patch', 'put', 'delete', 'head']
 
-for method in methods
-	routes[method] = []
-	Route66[method] = (match) ->
-		Route66.addRoute method, match, arguments
-
 Route66.sort = -> # we have to sort routes, for correct dispatching
 	for method in methods
 		routes[method].sort (a, b) ->
 			b.match.toString().length - a.match.toString().length
 
-module.exports = Route66 # preparing for the journey
+async.forEach methods, (method, nextMethod) ->
+	routes[method] = []
+	Route66[method] = (match) ->
+		Route66.addRoute method, match, arguments
+	do nextMethod
+, ->
+	module.exports = Route66 # preparing for the journey
