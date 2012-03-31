@@ -38,7 +38,7 @@ toArray = (object) ->
 	items
 
 routes = {}
-methods = ['get', 'post', 'patch', 'put', 'delete', 'head']
+methods = ['get', 'post', 'patch', 'put', 'del', 'head']
 
 Route66.sort = -> # we have to sort routes, for correct dispatching
 	for method in methods

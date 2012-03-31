@@ -32,4 +32,4 @@ app.use router
 app.listen 3000
 ```
 
-Available methods: get, post, put, patch, delete, head.
+Available methods: get, post, put, patch, del, head.
