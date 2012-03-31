@@ -15,7 +15,6 @@ Route66 = (req, res, next) -> # function, that we are pushing to our connect mid
 			return async.forEachSeries route.functions, (fn, nextFn) -> # calling functions
 				fn(req, res, nextFn)
 			, ->
-				do next
 
 Route66.addRoute = (method, match, functions) -> # generic method for adding routes
 	params = []
