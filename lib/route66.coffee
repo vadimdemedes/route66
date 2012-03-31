@@ -29,7 +29,7 @@ Route66.addRoute = (method, match, functions) -> # generic method for adding rou
 	routes[method].push
 		match: new RegExp '^' + match.replace(/\//g, '\\/?').replace(/\:([A-Za-z_]+)(\?)?\/?/g, '([A-Za-z0-9_]+)$2') + '$' # making RegExp from string
 		params: params
-		functions: toArray(functions).slice 1
+		functions: if functions.length? then functions else toArray(functions).slice 1
 	do Route66.sort
 
 toArray = (object) ->

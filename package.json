@@ -1,6 +1,6 @@
 {
 	"name": "route66",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"author": "Vadim Demedes <sbioko@gmail.com>",
 	"description": "Routing functionality/middleware for Connect 2.0",
 	"main": "./index.js",
