@@ -3,8 +3,9 @@ url = require 'url'
 
 Route66 = (req, res, next) -> # function, that we are pushing to our connect middleware stack
 	for route in routes[req.method.toLowerCase()] # getting routes, that match current HTTP method
-		if route.match.test req.url.replace(url.parse(req.url).search, '')
-			values = route.match.exec(req.url).slice 1 # getting params from URL
+		requestUrl = req.url.replace url.parse(req.url).search, ''
+		if route.match.test requestUrl
+			values = route.match.exec(requestUrl).slice 1 # getting params from URL
 			i = 0
 			req.params = {}
 			loop
