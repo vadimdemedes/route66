@@ -12,8 +12,10 @@ Route66 = (req, res, next) -> # function, that we are pushing to our connect mid
 				break if i >= values.length
 				req.params[route.params[i]] = values[i] # getting key and value and setting them
 				i++
-			return async.forEachSeries route.functions, (fn, nextFn) -> # calling functions
+			functions = route.functions
+			return async.forEachSeries functions, (fn, nextFn) -> # calling functions
 				fn(req, res, nextFn)
+				do nextFn if functions.length is 0 # we should end this sometime
 			, ->
 
 Route66.addRoute = (method, match, functions) -> # generic method for adding routes
@@ -28,7 +30,7 @@ Route66.addRoute = (method, match, functions) -> # generic method for adding rou
 	routes[method].push
 		match: new RegExp '^' + match.replace(/\//g, '\\/?').replace(/\:([A-Za-z_]+)(\?)?\/?/g, '([A-Za-z0-9_]+)$2') + '$' # making RegExp from string
 		params: params
-		functions: if functions.length? then functions else toArray(functions).slice 1
+		functions: if functions instanceof Array then functions else toArray(functions).slice 1
 	do Route66.sort
 
 toArray = (object) ->

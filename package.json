@@ -1,6 +1,6 @@
 {
 	"name": "route66",
-	"version": "0.1.8",
+	"version": "0.1.9",
 	"author": "Vadim Demedes <sbioko@gmail.com>",
 	"description": "Routing functionality/middleware for Connect 2.0",
 	"main": "./index.js",
@@ -14,7 +14,7 @@
 		"node": ">=0.4"
 	},
 	"devDependencies": {
-		"connect": "2.0.2"
+		"connect": "2.0.3"
 	},
 	"dependencies": {
 		"async": "*"
