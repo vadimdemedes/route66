@@ -1,7 +1,7 @@
 async = require 'async'
 url = require 'url'
 
-Route66 = (req, res, next) -> # function, that we are pushing to our connect middleware stack
+Route66 = (req, res) -> # function, that we are pushing to our connect middleware stack
 	for route in routes[req.method.toLowerCase()] # getting routes, that match current HTTP method
 		requestUrl = req.url.replace url.parse(req.url).search, ''
 		if route.match.test requestUrl
@@ -17,6 +17,14 @@ Route66 = (req, res, next) -> # function, that we are pushing to our connect mid
 				fn(req, res, nextFn)
 				do nextFn if functions.length is 0 # we should end this sometime
 			, ->
+	
+	if Route66.notFoundRoute
+		Route66.notFoundRoute req, res
+	else
+		res.end "Could not #{ req.method } #{ req.path }"
+
+Route66.notFound = (route) ->
+	Route66.notFoundRoute = route
 
 Route66.addRoute = (method, match, functions) -> # generic method for adding routes
 	params = []
