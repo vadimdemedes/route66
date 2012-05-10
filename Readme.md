@@ -39,9 +39,7 @@ Available methods: get, post, put, patch, del, head.
 
 # Tests
 
-Run tests using:
-
-```mocha```
+Run tests using:`mocha`
 
 # License
 
