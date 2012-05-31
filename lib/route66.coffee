@@ -2,7 +2,12 @@ async = require 'async'
 url = require 'url'
 
 Route66 = (req, res) -> # function, that we are pushing to our connect middleware stack
-	for route in routes[req.method.toLowerCase()] # getting routes, that match current HTTP method
+	if req.method is 'DELETE'
+		method = 'del'
+	else
+		method = req.method.toLowerCase()
+	
+	for route in routes[method] # getting routes, that match current HTTP method
 		requestUrl = req.url.replace url.parse(req.url).search, ''
 		if route.match.test requestUrl
 			values = route.match.exec(requestUrl).slice 1 # getting params from URL
