@@ -26,7 +26,7 @@ Route66 = (req, res) -> # function, that we are pushing to our connect middlewar
 	if Route66.notFoundRoute
 		Route66.notFoundRoute req, res
 	else
-		res.end "Could not #{ req.method } #{ req.path }"
+		res.end "Could not #{ req.method } #{ req.url }"
 
 Route66.notFound = (route) ->
 	Route66.notFoundRoute = route
@@ -60,10 +60,9 @@ Route66.sort = -> # we have to sort routes, for correct dispatching
 		routes[method].sort (a, b) ->
 			b.match.toString().length - a.match.toString().length
 
-async.forEach methods, (method, nextMethod) ->
+methods.forEach (method) ->
 	routes[method] = []
 	Route66[method] = (match) ->
 		Route66.addRoute method, match, arguments
-	do nextMethod
-, ->
-	module.exports = Route66 # preparing for the journey
+
+module.exports = Route66 # preparing for the journey
