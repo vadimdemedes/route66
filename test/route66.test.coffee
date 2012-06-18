@@ -14,7 +14,10 @@ router.get '/withMiddleware', (req, res, next) ->
 	do next
 , (req, res) ->
 	res.end req.message
-	
+
+router.get '/posts/:title', (req, res) ->
+	res.end req.params.title
+
 router.post '/', (req, res) ->
 	res.end 'POST /'
 
@@ -31,6 +34,14 @@ describe 'Route66', ->
 			method: 'GET'
 		, (err, res) ->
 			res.body.should.equal 'GET /'
+			do done
+	
+	it 'should match "GET /:title" route', (done) ->
+		request
+			url: 'http://localhost:8080/posts/i-love-apple'
+			method: 'GET'
+		, (err, res) ->
+			res.body.should.equal 'i-love-apple'
 			do done
 	
 	it 'should match "POST /" route', (done) ->

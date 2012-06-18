@@ -40,8 +40,9 @@ Route66.addRoute = (method, match, functions) -> # generic method for adding rou
 			params.push result.slice(1).toString()
 			matchClone = matchClone.replace /\:([A-Za-z_]+)\/?/, ''
 		break if not /\:([A-Za-z_]+)\/?/.test matchClone # while there are still some
+	
 	routes[method].push
-		match: new RegExp '^' + match.replace(/\//g, '\\/?').replace(/\:([A-Za-z_]+)(\?)?\/?/g, '([A-Za-z0-9_]+)$2') + '$' # making RegExp from string
+		match: new RegExp '^' + match.replace(/\//g, '\\/?').replace(/\:([A-Za-z_]+)(\?)?\/?/g, '([A-Za-z0-9_-]+)$2') + '$' # making RegExp from string
 		params: params
 		functions: if functions instanceof Array then functions else toArray(functions).slice 1
 	do Route66.sort
@@ -58,7 +59,14 @@ methods = ['get', 'post', 'patch', 'put', 'del', 'head']
 Route66.sort = -> # we have to sort routes, for correct dispatching
 	for method in methods
 		routes[method].sort (a, b) ->
-			b.match.toString().length - a.match.toString().length
+			aMatch = a.match.toString()
+			bMatch = b.match.toString()
+			if -1 < aMatch.indexOf('([A-Za-z0-9_-]+)')
+				true
+			else if -1 < bMatch.indexOf('([A-Za-z0-9_-]+)')
+				false
+			else
+				bMatch.length - aMatch.length
 
 methods.forEach (method) ->
 	routes[method] = []
