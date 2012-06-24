@@ -1,6 +1,7 @@
 connect = require 'connect'
 request = require 'request'
 router = require '../lib/route66'
+router.autosort = yes
 
 require 'should'
 

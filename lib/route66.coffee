@@ -56,7 +56,10 @@ toArray = (object) ->
 routes = {}
 methods = ['get', 'post', 'patch', 'put', 'del', 'head']
 
+Route66.autosort = yes
+
 Route66.sort = -> # we have to sort routes, for correct dispatching
+	return if not Route66.autosort
 	for method in methods
 		routes[method].sort (a, b) ->
 			aMatch = a.match.toString()
@@ -67,6 +70,8 @@ Route66.sort = -> # we have to sort routes, for correct dispatching
 				false
 			else
 				bMatch.length - aMatch.length
+	
+	undefined
 
 methods.forEach (method) ->
 	routes[method] = []
