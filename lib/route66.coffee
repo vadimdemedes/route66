@@ -56,7 +56,7 @@ toArray = (object) ->
 		items.push object[item]
 	items
 
-methods = ['get', 'post', 'patch', 'put', 'del', 'head']
+methods = ['get', 'post', 'patch', 'put', 'del', 'head', 'options']
 
 Route66.autosort = yes
 
