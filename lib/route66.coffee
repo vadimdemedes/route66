@@ -9,18 +9,19 @@ Route66 = (req, res) -> # function, that we are pushing to our connect middlewar
 	
 	for route in Route66.routes[method] # getting routes, that match current HTTP method
 		requestUrl = req.url.replace url.parse(req.url).search, ''
-		if route.match.test requestUrl
-			values = route.match.exec(requestUrl).slice 1 # getting params from URL
+		if route.regex.test requestUrl
+			values = route.regex.exec(requestUrl).slice 1 # getting params from URL
 			i = 0
 			req.params = {}
 			loop
 				break if i >= values.length
 				req.params[route.params[i]] = values[i] # getting key and value and setting them
 				i++
+			
 			functions = route.functions
 			return async.forEachSeries functions, (fn, nextFn) -> # calling functions
 				fn(req, res, nextFn)
-				do nextFn if functions.length is 0 # we should end this sometime
+				nextFn() if functions.length is 0 # we should end this sometime
 			, ->
 	
 	if Route66.notFoundRoute
@@ -33,18 +34,19 @@ Route66.routes = {}
 Route66.notFound = (route) ->
 	Route66.notFoundRoute = route
 
-Route66.addRoute = (method, match, functions) -> # generic method for adding routes
+Route66.addRoute = (method, route, functions) -> # generic method for adding routes
 	params = []
-	matchClone = match # for some dark magic
+	routeClone = route # for some dark magic
 	loop
-		result = /\:([A-Za-z_]+)\/?/.exec matchClone # getting keys/names of parameters
+		result = /\:([A-Za-z_]+)\/?/.exec routeClone # getting keys/names of parameters
 		if result
 			params.push result.slice(1).toString()
-			matchClone = matchClone.replace /\:([A-Za-z_]+)\/?/, ''
-		break if not /\:([A-Za-z_]+)\/?/.test matchClone # while there are still some
+			routeClone = routeClone.replace /\:([A-Za-z_]+)\/?/, ''
+		break if not /\:([A-Za-z_]+)\/?/.test routeClone # while there are still some
 	
 	Route66.routes[method].push
-		match: new RegExp '^' + match.replace(/\//g, '\\/?').replace(/\:([A-Za-z_]+)(\?)?\/?/g, '([A-Za-z0-9_-]+)$2') + '$' # making RegExp from string
+		route: route
+		regex: new RegExp '^' + route.replace(/\//g, '\\/').replace(/\:([A-Za-z_]+)(\?)?\/?/g, '([A-Za-z0-9_-]+)$2') + '\\/?$' # making RegExp from string
 		params: params
 		functions: if functions instanceof Array then functions else toArray(functions).slice 1
 	
@@ -52,8 +54,7 @@ Route66.addRoute = (method, match, functions) -> # generic method for adding rou
 
 toArray = (object) ->
 	items = []
-	for item of object
-		items.push object[item]
+	items.push object[item] for item of object
 	items
 
 methods = ['get', 'post', 'patch', 'put', 'del', 'head', 'options']
@@ -62,22 +63,41 @@ Route66.autosort = yes
 
 Route66.sort = -> # we have to sort routes, for correct dispatching
 	return if not Route66.autosort
+	
+	sort = (a, b) ->
+		aRegex = a.regex.toString()
+		bRegex = b.regex.toString()
+		if -1 < aRegex.indexOf('([A-Za-z0-9_-]+)')
+			true
+		else if -1 < bRegex.indexOf('([A-Za-z0-9_-]+)')
+			false
+		else bRegex.length - aRegex.length
+	
 	for method in methods
-		Route66.routes[method].sort (a, b) ->
-			aMatch = a.match.toString()
-			bMatch = b.match.toString()
-			if -1 < aMatch.indexOf('([A-Za-z0-9_-]+)')
-				true
-			else if -1 < bMatch.indexOf('([A-Za-z0-9_-]+)')
-				false
-			else
-				bMatch.length - aMatch.length
+		if Route66.routes[method].length > 0
+			first = []
+			middle = []
+			last = []
+		
+			for route in Route66.routes[method]
+				if route.route is '/'
+					last.push route
+				else if not /[A-Za-z0-9_]+/.test route.route.replace(/\:[A-Za-z0-9_]+/g, '')
+					middle.push route
+				else first.push route
+			
+			first.sort sort
+			middle.sort sort
+			
+			first.push route for route in middle
+			first.push route for route in last
+		
+			Route66.routes[method] = first
 	
 	undefined
 
 methods.forEach (method) ->
 	Route66.routes[method] = []
-	Route66[method] = (match) ->
-		Route66.addRoute method, match, arguments
+	Route66[method] = (route) -> Route66.addRoute method, route, arguments
 
 module.exports = Route66 # preparing for the journey

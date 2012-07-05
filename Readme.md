@@ -13,6 +13,8 @@ router = require 'route66'
 connect = require 'connect'
 app = connect()
 
+router.autosort = yes # automatically sorts routes, defaults to yes, recommended to not touch it
+
 router.get '/', (req, res) -> # simplest route declaration
 	res.end()
 	
@@ -35,7 +37,7 @@ app.use router
 app.listen 3000
 ```
 
-Available methods: get, post, put, patch, del, head.
+Available methods: get, post, put, patch, del, head, options.
 
 # Tests
 

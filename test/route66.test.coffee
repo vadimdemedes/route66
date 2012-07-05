@@ -22,6 +22,9 @@ router.get '/posts/:title', (req, res) ->
 router.post '/', (req, res) ->
 	res.end 'POST /'
 
+router.get '/:first/:second', (req, res) ->
+	res.end 'Only parameters'
+
 router.notFound (req, res) ->
 	res.end "Not found."
 
@@ -59,6 +62,14 @@ describe 'Route66', ->
 			method: 'GET'
 		, (err, res) ->
 			res.body.should.equal 'GET /withMiddleware'
+			do done
+	
+	it 'should match not hassle-free route', (done) ->
+		request
+			url: 'http://localhost:8080/first/second/'
+			method: 'GET'
+		, (err, res) ->
+			res.body.should.equal 'Only parameters'
 			do done
 	
 	it 'should respond with an error', (done) ->
