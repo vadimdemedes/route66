@@ -42,10 +42,10 @@ describe 'Route66', ->
 	
 	it 'should match "GET /:title" route', (done) ->
 		request
-			url: 'http://localhost:8080/posts/i-love-apple'
+			url: 'http://localhost:8080/posts/i.love-apple'
 			method: 'GET'
 		, (err, res) ->
-			res.body.should.equal 'i-love-apple'
+			res.body.should.equal 'i.love-apple'
 			do done
 	
 	it 'should match "POST /" route', (done) ->

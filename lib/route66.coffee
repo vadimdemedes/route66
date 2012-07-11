@@ -46,7 +46,7 @@ Route66.addRoute = (method, route, functions) -> # generic method for adding rou
 	
 	Route66.routes[method].push
 		route: route
-		regex: new RegExp '^' + route.replace(/\//g, '\\/').replace(/\:([A-Za-z_]+)(\?)?\/?/g, '([A-Za-z0-9_-]+)$2') + '\\/?$' # making RegExp from string
+		regex: new RegExp '^' + route.replace(/\//g, '\\/').replace(/\:([A-Za-z_]+)(\?)?\/?/g, '([A-Za-z0-9._-]+)$2') + '\\/?$' # making RegExp from string
 		params: params
 		functions: if functions instanceof Array then functions else toArray(functions).slice 1
 	
