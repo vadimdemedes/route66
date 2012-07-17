@@ -2,13 +2,11 @@ async = require 'async'
 url = require 'url'
 
 Route66 = (req, res) -> # function, that we are pushing to our connect middleware stack
-	if req.method is 'DELETE'
-		method = 'del'
-	else
-		method = req.method.toLowerCase()
+	method = if req.method is 'DELETE' then 'del' else req.method.toLowerCase()
+	
+	requestUrl = req.url.replace url.parse(req.url).search, ''
 	
 	for route in Route66.routes[method] # getting routes, that match current HTTP method
-		requestUrl = req.url.replace url.parse(req.url).search, ''
 		if route.regex.test requestUrl
 			values = route.regex.exec(requestUrl).slice 1 # getting params from URL
 			i = 0
@@ -18,10 +16,9 @@ Route66 = (req, res) -> # function, that we are pushing to our connect middlewar
 				req.params[route.params[i]] = values[i] # getting key and value and setting them
 				i++
 			
-			functions = route.functions
-			return async.forEachSeries functions, (fn, nextFn) -> # calling functions
+			return async.forEachSeries route.functions, (fn, nextFn) -> # calling functions
 				fn(req, res, nextFn)
-				nextFn() if functions.length is 0 # we should end this sometime
+				nextFn() if route.functions.length is 0 # we should end this sometime
 			, ->
 	
 	if Route66.notFoundRoute
@@ -42,15 +39,15 @@ Route66.addRoute = (method, route, functions) -> # generic method for adding rou
 		if result
 			params.push result.slice(1).toString()
 			routeClone = routeClone.replace /\:([A-Za-z_]+)\/?/, ''
-		break if not /\:([A-Za-z_]+)\/?/.test routeClone # while there are still some
+		break if not /\:([A-Za-z_]+)\/?/.test(routeClone) # while there are still some
 	
 	Route66.routes[method].push
 		route: route
-		regex: new RegExp '^' + route.replace(/\//g, '\\/').replace(/\:([A-Za-z_]+)(\?)?\/?/g, '([A-Za-z0-9._-]+)$2') + '\\/?$' # making RegExp from string
+		regex: new RegExp('^' + route.replace(/\//g, '\\/').replace(/\:([A-Za-z_]+)(\?)?\/?/g, '$2([A-Za-z0-9._-]+)$2') + '\\/?$') # making RegExp from string
 		params: params
 		functions: if functions instanceof Array then functions else toArray(functions).slice 1
 	
-	do Route66.sort
+	Route66.sort()
 
 toArray = (object) ->
 	items = []

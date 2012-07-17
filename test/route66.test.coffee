@@ -16,8 +16,8 @@ router.get '/withMiddleware', (req, res, next) ->
 , (req, res) ->
 	res.end req.message
 
-router.get '/posts/:title', (req, res) ->
-	res.end req.params.title
+router.get '/posts/:title?', (req, res) ->
+	res.end req.params.title or 'empty'
 
 router.post '/', (req, res) ->
 	res.end 'POST /'
@@ -38,15 +38,21 @@ describe 'Route66', ->
 			method: 'GET'
 		, (err, res) ->
 			res.body.should.equal 'GET /'
-			do done
+			done()
 	
-	it 'should match "GET /:title" route', (done) ->
+	it 'should match "GET /posts/:title?" route', (done) ->
 		request
 			url: 'http://localhost:8080/posts/i.love-apple'
 			method: 'GET'
 		, (err, res) ->
 			res.body.should.equal 'i.love-apple'
-			do done
+			
+			request
+				url: 'http://localhost:8080/posts'
+				method: 'GET'
+			, (err, res) ->
+				res.body.should.equal 'empty'
+				done()
 	
 	it 'should match "POST /" route', (done) ->
 		request
@@ -54,7 +60,7 @@ describe 'Route66', ->
 			method: 'POST'
 		, (err, res) ->
 			res.body.should.equal 'POST /'
-			do done
+			done()
 	
 	it 'should call middleware stack', (done) ->
 		request
@@ -62,7 +68,7 @@ describe 'Route66', ->
 			method: 'GET'
 		, (err, res) ->
 			res.body.should.equal 'GET /withMiddleware'
-			do done
+			done()
 	
 	it 'should match not hassle-free route', (done) ->
 		request
@@ -70,7 +76,7 @@ describe 'Route66', ->
 			method: 'GET'
 		, (err, res) ->
 			res.body.should.equal 'Only parameters'
-			do done
+			done()
 	
 	it 'should respond with an error', (done) ->
 		request
@@ -78,4 +84,4 @@ describe 'Route66', ->
 			method: 'GET'
 		, (err, res) ->
 			res.body.should.equal 'Not found.'
-			do done
+			done()
