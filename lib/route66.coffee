@@ -21,6 +21,7 @@ Route66 = (req, res) -> # function, that we are pushing to our connect middlewar
 				nextFn() if route.functions.length is 0 # we should end this sometime
 			, ->
 	
+	res.statusCode = 404
 	if Route66.notFoundRoute
 		Route66.notFoundRoute req, res
 	else
