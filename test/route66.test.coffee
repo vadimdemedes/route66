@@ -25,6 +25,9 @@ router.post '/', (req, res) ->
 router.get '/:first/:second', (req, res) ->
 	res.end 'Only parameters'
 
+router.get '/:email', (req, res) ->
+	res.end 'Got an email!'
+
 router.notFound (req, res) ->
 	res.end "Not found."
 
@@ -76,11 +79,16 @@ describe 'Route66', ->
 			method: 'GET'
 		, (err, res) ->
 			res.body.should.equal 'Only parameters'
-			done()
+			request
+				url: 'http://localhost:8080/test@test.com'
+				method: 'GET'
+			, (err, res) ->
+				res.body.should.equal 'Got an email!'
+				done()
 	
 	it 'should respond with an error', (done) ->
 		request
-			url: 'http://localhost:8080/error'
+			url: 'http://localhost:8080/one/two/error'
 			method: 'GET'
 		, (err, res) ->
 			res.body.should.equal 'Not found.'
