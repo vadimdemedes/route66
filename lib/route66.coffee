@@ -69,7 +69,24 @@ Route66.sort = -> # we have to sort routes, for correct dispatching
 			true
 		else if -1 < bRegex.indexOf('([A-Za-z0-9_-]+)')
 			false
-		else bRegex.length - aRegex.length
+		#else bRegex.length - aRegex.length
+		else
+			numberOfParams = a: 0, b: 0
+			loop
+				paramsIn = a: yes, b: yes
+				if /\:[A-Za-z0-9_]+/.test a.route
+					numberOfParams.a++
+					a.route = a.route.replace(/\:[A-Za-z0-9_]+/, '')
+				else paramsIn.a = no
+				
+				if /\:[A-Za-z0-9_]+/.test b.route
+					numberOfParams.b++
+					b.route = b.route.replace(/\:[A-Za-z0-9_]+/, '')
+				else paramsIn.b = no
+				
+				break if not paramsIn.a and not paramsIn.b
+			
+			return numberOfParams.a > numberOfParams.b
 	
 	for method in methods
 		if Route66.routes[method].length > 0
@@ -80,7 +97,7 @@ Route66.sort = -> # we have to sort routes, for correct dispatching
 			for route in Route66.routes[method]
 				if route.route is '/'
 					last.push route
-				else if not /[A-Za-z0-9_]+/.test route.route.replace(/\:[A-Za-z0-9_]+/g, '')
+				else if /\:[A-Za-z0-9_]+/.test route.route
 					middle.push route
 				else first.push route
 			
