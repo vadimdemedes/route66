@@ -25,8 +25,11 @@ router.post '/', (req, res) ->
 router.get '/:first/:second', (req, res) ->
 	res.end 'Only parameters'
 
-router.get '/:email', (req, res) ->
-	res.end 'Got an email!'
+router.get '/:id', (req, res) ->
+	res.end 'Got an id!'
+
+router.get '/new', (req, res) ->
+	res.end 'Creating new resource'
 
 router.notFound (req, res) ->
 	res.end "Not found."
@@ -73,18 +76,23 @@ describe 'Route66', ->
 			res.body.should.equal 'GET /withMiddleware'
 			done()
 	
-	it 'should match not hassle-free route', (done) ->
+	it 'should match not wrong route', (done) ->
 		request
 			url: 'http://localhost:8080/first/second/'
 			method: 'GET'
 		, (err, res) ->
 			res.body.should.equal 'Only parameters'
 			request
-				url: 'http://localhost:8080/test@test.com'
+				url: 'http://localhost:8080/123'
 				method: 'GET'
 			, (err, res) ->
-				res.body.should.equal 'Got an email!'
-				done()
+				res.body.should.equal 'Got an id!'
+				request
+					url: 'http://localhost:8080/new'
+					method: 'GET'
+				, (err, res) ->
+					res.body.should.equal 'Creating new resource'
+					done()
 	
 	it 'should respond with an error', (done) ->
 		request
