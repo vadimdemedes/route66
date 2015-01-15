@@ -1,5 +1,21 @@
 "use strict";
 
+var _slicedToArray = function (arr, i) {
+  if (Array.isArray(arr)) {
+    return arr;
+  } else {
+    var _arr = [];
+
+    for (var _iterator = arr[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) {
+      _arr.push(_step.value);
+
+      if (i && _arr.length === i) break;
+    }
+
+    return _arr;
+  }
+};
+
 var _prototypeProperties = function (child, staticProps, instanceProps) {
   if (staticProps) Object.defineProperties(child, staticProps);
   if (instanceProps) Object.defineProperties(child.prototype, instanceProps);
@@ -41,18 +57,33 @@ var Router = (function () {
         });
 
         this.routes.forEach(function (route) {
+          var _route$target$split = route.target.split("#");
+
+          var _route$target$split2 = _slicedToArray(_route$target$split, 2);
+
+          var namespace = _route$target$split2[0];
+          var method = _route$target$split2[1];
+
+
+          namespace = namespace.split("/");
+          var controller = namespace.pop();
+          namespace = namespace.join("/");
+
+          var target = route.target;
+          var path = route.path;
+
           var keys = [];
           var regexp = pathToRegexp(route.path, keys);
 
-          route = {
-            path: route.path,
+          _this._compiledRoutes[route.method].push({
+            path: path,
             regexp: regexp,
             keys: keys,
-            method: route.method,
-            target: route.target
-          };
-
-          _this._compiledRoutes[route.method].push(route);
+            namespace: namespace,
+            controller: controller,
+            method: method,
+            target: target
+          });
         });
       },
       writable: true,
