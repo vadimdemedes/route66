@@ -40,7 +40,12 @@ app.use(router.express());
 - Lightweight (165 sloc, commented and understandable code)
 - Convenient API for defining routes
 - Compatible with Koa and Express
-- Automatically parses parameters from urls
+
+**Very soon**:
+
+- Automatically parse parameters from urls
+- Support regular expressions
+- Support route parameters
 
 
 ## Installation
