@@ -1,56 +1,160 @@
 # Route66
 
-Route66 - is a middleware for routing for Connect 2.0. It was created, because original *connect.router* was removed from the latest version. It supports multiple methods, request params and easy patterns.
+Route66 is a router middleware inspired by Rails for Koa and Express.
 
-# Installation
 
-`npm install route66`
+## How is it different?
 
-# Usage
+It is designed to suit **big** Node.js apps, with ability to customize the way requests are dispatched.  
+Route66 provides a great API for readable and comfortable definitions of routes.
+Route66 can adapt to every project structure out there by letting you decide how request should be dispatched.
 
-```coffee-script
-router = require 'route66'
-connect = require 'connect'
-app = connect()
+To better understand the idea behind this project, check out this example:
 
-router.autosort = yes # automatically sorts routes, defaults to yes, recommended to not touch it
+```
+var Router = require('route66');
+var express = require('express');
 
-router.get '/', (req, res) -> # simplest route declaration
-	res.end()
-	
-router.get '/new', (req, res) -> # another simple route
-	res.end()
+var router = new Router();
+var app = express();
 
-router.post '/', (req, res, next) -> # now, with middleware
-	do next
-, (req, res) ->
-	res.end()
-	
-router.get '/:id', (req, res) -> # with request params
-	req.params.id
-	res.end()
+router.setup(function () {
+  this.get('/posts/create', 'posts#create');
+});
 
-router.notFound (req, res) -> # when nothing found
-	res.end 'Oops, did not find anything.'
-	
-app.use router
-app.listen 3000
+router.dispatch(function (route, req, res) {
+  var controllerName = route.controller; // "posts"
+  var methodName = route.method; // "create"
+  
+  // require PostsController and execute "create" method
+  PostsController.create(req, res);
+});
+
+app.use(router.express());
 ```
 
-Available methods: get, post, put, patch, del, head, options.
 
-# Tests
+## Features
 
-Run tests using:`mocha`
+- Flexible (allows you to handle the request the way you want)
+- Lightweight (165 sloc, commented and understandable code)
+- Convenient API for defining routes
+- Compatible with Koa and Express
+- Automatically parses parameters from urls
 
-# License
 
-(The MIT License)
+## Installation
 
-Copyright (c) 2011 Vadim Demedes sbioko@gmail.com
+Install via npm:
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+```
+$ npm install route66 --save
+```
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+## All-in-one example
+
+**Website with a full documentation will be created soon.**
+
+```javascript
+var Router = require('route66');
+
+var router = new Router();
+
+router.setup(function () {
+  this.root('home#index');
+  
+  this.get('/welcome', 'home#welcome');
+  
+  this.post('/contact', 'contact#send');
+  
+  this.resource('task');
+  
+  this.resource('user', { except: ['destroy'] });
+  
+  this.resource('post', function () {
+    this.resource('comment', { only: ['create'] });
+  });
+  
+  this.namespace('api', function () {
+    this.resource('task');
+  });
+});
+```
+
+#### Dispatching requests in Express apps
+
+```javascript
+var Router = require('route66');
+var express = require('express');
+
+var router = new Router();
+var app = express();
+
+router.setup(function () {
+  this.namespace('api/v1', function () {
+    this.post('/posts', 'posts#create');
+  });
+});
+
+router.dispatch(function (route, req, res) {
+  /*
+  route = {
+    controller: 'posts',
+    method: 'create',
+    namespace: 'api/v1'
+  }
+  */
+});
+
+app.use(router.express());
+```
+
+#### Dispatching requests in Koa apps
+
+```javascript
+var Router = require('route66');
+var koa = require('koa');
+
+var router = new Router();
+var app = koa();
+
+router.setup(function () {
+  this.namespace('api/v1', function () {
+    this.post('/posts', 'posts#create');
+  });
+});
+
+router.dispatch(function *(route, context) {
+  /*
+  route = {
+    controller: 'posts',
+    method: 'create',
+    namespace: 'api/v1'
+  }
+  */
+  
+  // this is also context
+  // this == context
+});
+
+app.use(router.koa());
+```
+
+
+## Tests
+
+[![Circle CI](https://circleci.com/gh/vdemedes/route66.svg?style=svg)](https://circleci.com/gh/vdemedes/route66)
+
+**Note**: You must have Node.js v0.11.x installed.
+
+To run tests, execute this:
+
+```
+$ npm test
+```
+
+
+## License
+
+Route66 is released under the MIT license.

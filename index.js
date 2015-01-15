@@ -1,1 +1,1 @@
-module.exports = require('./lib/route66');
+module.exports = require('./build/router');

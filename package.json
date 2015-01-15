@@ -1,24 +1,31 @@
 {
-	"name": "route66",
-	"version": "0.2.7",
-	"author": "Vadim Demedes <sbioko@gmail.com>",
-	"description": "Routing functionality/middleware for Connect 2.0",
-	"main": "./index.js",
-	"keywords": ["route", "connect", "routes", "routing"],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/vdemedes/route66.git"
-	},
-	"license": "MIT",
-	"engine": {
-		"node": ">=0.4"
-	},
-	"devDependencies": {
-		"connect": ">=2.0",
-		"request": "*",
-		"should": "*"
-	},
-	"dependencies": {
-		"async": "0.1.22"
-	}
+  "name": "route66",
+  "version": "0.3.0",
+  "description": "Rails-like router for Koa and Express",
+  "author": "Vadim Demedes <vdemedes@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --harmony"
+  },
+  "dependencies": {
+    "inflect": "^0.3.0",
+    "koa-route": "^2.4.0",
+    "methods": "^1.1.1",
+    "path-to-regexp": "^1.0.2"
+  },
+  "devDependencies": {
+    "6to5": "^2.12.3",
+    "async": "^0.9.0",
+    "chai": "^1.10.0",
+    "express": "^4.11.0",
+    "koa": "^0.14.0",
+    "supertest": "^0.15.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vdemedes/route66"
+  },
+  "bugs": {
+    "url": "https://github.com/vdemedes/route66/issues"
+  }
 }
