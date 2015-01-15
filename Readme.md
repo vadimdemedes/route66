@@ -11,7 +11,7 @@ Route66 can adapt to every project structure out there by letting you decide how
 
 To better understand the idea behind this project, check out this example:
 
-```
+```javascript
 var Router = require('route66');
 var express = require('express');
 
