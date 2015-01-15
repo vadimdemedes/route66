@@ -5,9 +5,9 @@ Route66 is a router middleware inspired by Rails for Koa and Express.
 
 ## How is it different?
 
-It is designed to suit **big** Node.js apps, with ability to customize the way requests are dispatched.  
+It is designed to suit **medium and big** Node.js apps, with ability to customize the way requests are dispatched.  
 Route66 provides a great API for readable and comfortable definitions of routes.
-Route66 can adapt to every project structure out there by letting you decide how request should be dispatched.
+Route66 can adapt to every project structure out there by letting you decide how request should be handled.
 
 To better understand the idea behind this project, check out this example:
 
@@ -40,6 +40,7 @@ app.use(router.express());
 - Lightweight (165 sloc, commented and understandable code)
 - Convenient API for defining routes
 - Compatible with Koa and Express
+- Extensive tests
 
 **Very soon**:
 
