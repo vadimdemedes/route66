@@ -301,35 +301,21 @@ var Router = (function () {
             throw new Error("Router does not have a dispatch function.");
           }
 
-          var method = req.method.toLowerCase();
-          var routes = router._compiledRoutes[method];
+          var _router$resolve = router.resolve(req.method, req.url);
 
-          var route = undefined;
-          var index = 0;
+          var route = _router$resolve.route;
+          var params = _router$resolve.params;
 
-          while (route = routes[index++]) {
-            var _ret = (function () {
-              var params = undefined;
 
-              if (params = route.regexp.exec(req.url)) {
-                req.params = params.slice(1).map(function (param) {
-                  return decodeURIComponent(param);
-                });
-                route.keys.forEach(function (key, i) {
-                  return req.params[key] = req.params[i];
-                });
-
-                return {
-                  v: router._dispatch(route, req, res, next)
-                };
-              }
-            })();
-
-            if (typeof _ret === "object") return _ret.v;
+          if (!route) {
+            res.status = 404;
+            next(false);
+            return;
           }
 
-          res.status = 404;
-          next(false);
+          req.params = params;
+
+          router._dispatch(route, req, res, next);
         };
       },
       writable: true,
@@ -341,40 +327,59 @@ var Router = (function () {
         var router = this;
 
         return function* (next) {
-          var _this2 = this;
           if (!router._dispatch) {
             throw new Error("Router does not have a dispatch function.");
           }
 
-          var method = this.method.toLowerCase();
-          var routes = router._compiledRoutes[method];
+          var _router$resolve2 = router.resolve(this.method, this.url);
 
-          var route = undefined;
-          var index = 0;
+          var route = _router$resolve2.route;
+          var params = _router$resolve2.params;
 
-          while (route = routes[index++]) {
-            var _ret2 = yield* (function* () {
-              var params = undefined;
 
-              if (params = route.regexp.exec(_this2.url)) {
-                _this2.params = params.slice(1).map(function (param) {
-                  return decodeURIComponent(param);
-                });
-                route.keys.forEach(function (key, i) {
-                  return _this2.params[key] = _this2.params[i];
-                });
-
-                return {
-                  v: yield router._dispatch.call(_this2, route, _this2)
-                };
-              }
-            })();
-            if (typeof _ret2 === "object") return _ret2.v;
+          if (!route) {
+            this.status = 404;
+            yield next;
+            return;
           }
 
-          this.status = 404;
-          yield next;
+          this.params = params;
+
+          yield router._dispatch.call(this, route, this);
         };
+      },
+      writable: true,
+      enumerable: true,
+      configurable: true
+    },
+    resolve: {
+      value: function resolve(method, url) {
+        method = method.toLowerCase();
+
+        var routes = this._compiledRoutes[method];
+
+        var route = undefined;
+        var index = 0;
+
+        while (route = routes[index++]) {
+          var _ret = (function () {
+            var params = undefined;
+
+            if (params = route.regexp.exec(url)) {
+              params = params.slice(1).map(decodeURIComponent);
+
+              route.keys.forEach(function (key, i) {
+                return params[key] = params[i];
+              });
+
+              return {
+                v: { route: route, params: params }
+              };
+            }
+          })();
+
+          if (typeof _ret === "object") return _ret.v;
+        }
       },
       writable: true,
       enumerable: true,
