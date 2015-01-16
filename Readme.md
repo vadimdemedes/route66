@@ -41,12 +41,11 @@ app.use(router.express());
 - Convenient API for defining routes
 - Compatible with Koa and Express
 - Extensive tests
+- Support for route parameters
 
 **Very soon**:
 
-- Automatically parse parameters from urls
 - Support regular expressions
-- Support route parameters
 
 
 ## Installation

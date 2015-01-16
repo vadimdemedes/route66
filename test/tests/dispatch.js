@@ -9,7 +9,7 @@ var request = require('supertest');
  * Tests
  */
 
-module.exports = function (context) {
+module.exports = function (framework, context) {
   var router, app;
   
   beforeEach (function () {
@@ -47,6 +47,58 @@ module.exports = function (context) {
         res.text.should.equal('home#welcome');
         done();
       });
+  });
+  
+  only ('koa', function () {
+    it ('should dispatch a route and parse params', function (done) {
+      router.setup(function () {
+        this.get('/posts/:author/:title', 'posts#show');
+      });
+
+      router.dispatch(function *(route) {
+        var author = this.params.author;
+        var title = this.params.title;
+
+        author.should.equal('john');
+        title.should.equal('great');
+
+        this.body = '';
+        done();
+      });
+
+      request(app)
+        .get('/posts/john/great')
+        .expect(200)
+        .end(function (err) {
+          if (err) return done(err);
+        });
+    });
+  });
+  
+  only ('express', function () {
+    it ('should dispatch a route and parse params', function (done) {
+      router.setup(function () {
+        this.get('/posts/:author/:title', 'posts#show');
+      });
+
+      router.dispatch(function (route, req, res) {
+        var author = req.params.author;
+        var title = req.params.title;
+
+        author.should.equal('john');
+        title.should.equal('great');
+
+        res.end();
+        done();
+      });
+
+      request(app)
+        .get('/posts/john/great')
+        .expect(200)
+        .end(function (err) {
+          if (err) return done(err);
+        });
+    });
   });
   
   it ('should dispatch a namespaced route', function (done) {
@@ -175,4 +227,8 @@ module.exports = function (context) {
       }
     ], done);
   });
+  
+  function only (target, tests) {
+    if (target === framework) tests();
+  }
 };

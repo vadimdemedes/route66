@@ -222,7 +222,7 @@ describe ('Router', function () {
         context.app = app.listen();
       });
 
-      require('./tests/dispatch')(context);
+      require('./tests/dispatch')('express', context);
     });
     
     describe ('Koa', function () {
@@ -243,7 +243,7 @@ describe ('Router', function () {
         context.app = app.listen();
       });
       
-      require('./tests/dispatch')(context);
+      require('./tests/dispatch')('koa', context);
     });
   });
 });

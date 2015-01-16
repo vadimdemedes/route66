@@ -74,6 +74,9 @@ var Router = (function () {
 
           var keys = [];
           var regexp = pathToRegexp(route.path, keys);
+          keys = keys.map(function (key) {
+            return key.name;
+          });
 
           _this._compiledRoutes[route.method].push({
             path: path,
@@ -305,9 +308,24 @@ var Router = (function () {
           var index = 0;
 
           while (route = routes[index++]) {
-            if (route.regexp.test(req.url)) {
-              return router._dispatch(route, req, res, next);
-            }
+            var _ret = (function () {
+              var params = undefined;
+
+              if (params = route.regexp.exec(req.url)) {
+                req.params = params.slice(1).map(function (param) {
+                  return decodeURIComponent(param);
+                });
+                route.keys.forEach(function (key, i) {
+                  return req.params[key] = req.params[i];
+                });
+
+                return {
+                  v: router._dispatch(route, req, res, next)
+                };
+              }
+            })();
+
+            if (typeof _ret === "object") return _ret.v;
           }
 
           res.status = 404;
@@ -323,6 +341,7 @@ var Router = (function () {
         var router = this;
 
         return function* (next) {
+          var _this2 = this;
           if (!router._dispatch) {
             throw new Error("Router does not have a dispatch function.");
           }
@@ -334,9 +353,23 @@ var Router = (function () {
           var index = 0;
 
           while (route = routes[index++]) {
-            if (route.regexp.test(this.url)) {
-              return yield router._dispatch.call(this, route, this);
-            }
+            var _ret2 = yield* (function* () {
+              var params = undefined;
+
+              if (params = route.regexp.exec(_this2.url)) {
+                _this2.params = params.slice(1).map(function (param) {
+                  return decodeURIComponent(param);
+                });
+                route.keys.forEach(function (key, i) {
+                  return _this2.params[key] = _this2.params[i];
+                });
+
+                return {
+                  v: yield router._dispatch.call(_this2, route, _this2)
+                };
+              }
+            })();
+            if (typeof _ret2 === "object") return _ret2.v;
           }
 
           this.status = 404;
