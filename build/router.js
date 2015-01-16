@@ -301,17 +301,17 @@ var Router = (function () {
             throw new Error("Router does not have a dispatch function.");
           }
 
-          var _router$resolve = router.resolve(req.method, req.url);
+          var result = router.resolve(req.method, req.url);
 
-          var route = _router$resolve.route;
-          var params = _router$resolve.params;
-
-
-          if (!route) {
+          if (!result) {
             res.status = 404;
             next(false);
             return;
           }
+
+          var route = result.route;
+          var params = result.params;
+
 
           req.params = params;
 
@@ -331,17 +331,17 @@ var Router = (function () {
             throw new Error("Router does not have a dispatch function.");
           }
 
-          var _router$resolve2 = router.resolve(this.method, this.url);
+          var result = router.resolve(this.method, this.url);
 
-          var route = _router$resolve2.route;
-          var params = _router$resolve2.params;
-
-
-          if (!route) {
+          if (!result) {
             this.status = 404;
             yield next;
             return;
           }
+
+          var route = result.route;
+          var params = result.params;
+
 
           this.params = params;
 

@@ -133,6 +133,21 @@ module.exports = function (framework, context) {
     ], done);
   });
   
+  it ('should respond with 404 when hitting undefined route', function (done) {
+    router.setup(function () {
+      this.get('/posts', 'posts#index');
+    });
+    
+    request(app)
+      .get('/posts/great')
+      .expect(404)
+      .end(function (err, res) {
+        if (err) return done(err);
+        
+        done();
+      });
+  });
+  
   it ('should dispatch a namespaced route', function (done) {
     router.setup(function () {
       this.namespace('api', function () {
