@@ -101,6 +101,38 @@ module.exports = function (framework, context) {
     });
   });
   
+  it ('should dispatch a route with optional parameters', function (done) {
+    router.setup(function () {
+      this.get('/posts/:title.:format?', 'posts#show');
+    });
+    
+    parallel([
+      function (next) {
+        request(app)
+          .get('/posts/great')
+          .expect(200)
+          .end(function (err, res) {
+            if (err) return next(err);
+            
+            res.text.should.equal('posts#show');
+            next();
+          });
+      },
+      
+      function (next) {
+        request(app)
+          .get('/posts/great.json')
+          .expect(200)
+          .end(function (err, res) {
+            if (err) return next(err);
+            
+            res.text.should.equal('posts#show');
+            next();
+          });
+      }
+    ], done);
+  });
+  
   it ('should dispatch a namespaced route', function (done) {
     router.setup(function () {
       this.namespace('api', function () {
