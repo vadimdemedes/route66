@@ -37,7 +37,7 @@ app.use(router.express());
 ## Features
 
 - Flexible (allows you to handle the request the way you want)
-- Lightweight (165 sloc, commented and understandable code)
+- Lightweight (189 sloc, commented and understandable code)
 - Convenient API for defining routes
 - Compatible with Koa and Express (and any other custom framework or app)
 - Extensive tests
