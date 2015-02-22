@@ -8,6 +8,7 @@
     "test": "./node_modules/.bin/mocha --harmony"
   },
   "dependencies": {
+    "babel": "^4.4.5",
     "inflect": "^0.3.0",
     "koa-route": "^2.4.0",
     "methods": "^1.1.1",
