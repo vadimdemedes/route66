@@ -93,7 +93,7 @@ module.exports = function (framework, context) {
       });
 
       request(app)
-        .get('/posts/john/great')
+        .get('/posts/john/great?test=true')
         .expect(200)
         .end(function (err) {
           if (err) return done(err);

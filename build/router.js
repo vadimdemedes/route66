@@ -28,6 +28,7 @@ var _prototypeProperties = function (child, staticProps, instanceProps) {
 var pathToRegexp = require("path-to-regexp");
 var methods = require("methods");
 var inflect = require("inflect");
+var parse = require("url").parse;
 
 require("./util");
 
@@ -361,13 +362,18 @@ var Router = (function () {
         var route = undefined;
         var index = 0;
 
+        url = parse(url).pathname;
+
         while (route = routes[index++]) {
           var _ret = (function () {
             var params = undefined;
 
             if (params = route.regexp.exec(url)) {
+              // extract parameters from .exec() result
+              // and decodeURIComponent each of them
               params = params.slice(1).map(decodeURIComponent);
 
+              // assign keys to params array
               route.keys.forEach(function (key, i) {
                 return params[key] = params[i];
               });
