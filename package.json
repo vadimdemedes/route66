@@ -8,15 +8,14 @@
     "test": "./node_modules/.bin/mocha --harmony"
   },
   "dependencies": {
-    "babel": "^4.4.5",
     "inflect": "^0.3.0",
     "koa-route": "^2.4.0",
     "methods": "^1.1.1",
     "path-to-regexp": "^1.0.2"
   },
   "devDependencies": {
-    "6to5": "^2.12.3",
     "async": "^0.9.0",
+    "babel": "^4.4.5",
     "chai": "^1.10.0",
     "express": "^4.11.0",
     "koa": "^0.14.0",
