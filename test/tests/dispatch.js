@@ -56,8 +56,8 @@ module.exports = function (framework, context) {
       });
 
       router.dispatch(function *(route) {
-        var author = this.params.author;
-        var title = this.params.title;
+        var author = route.params.author;
+        var title = route.params.title;
 
         author.should.equal('john');
         title.should.equal('great');

@@ -244,18 +244,15 @@ var Router = (function () {
         throw new Error("Router does not have a dispatch function.");
       }
 
-      var result = router.resolve(req.method, req.url);
+      var route = router.resolve(req.method, req.url);
 
-      if (!result) {
+      if (!route) {
         res.status = 404;
         next(false);
         return;
       }
 
-      var route = result.route;
-      var params = result.params;
-
-      req.params = params;
+      req.params = route.params;
 
       router._dispatch(route, req, res, next);
     };
