@@ -1,6 +1,6 @@
 {
   "name": "route66",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Rails-like router for Koa and Express",
   "author": "Vadim Demedes <vdemedes@gmail.com>",
   "license": "MIT",
