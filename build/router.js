@@ -274,6 +274,8 @@ var Router = (function () {
         return;
       }
 
+      this.params = route.params;
+
       yield router._dispatch.call(this, route, this);
     };
   };
