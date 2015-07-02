@@ -13,8 +13,6 @@ var methods = require("methods");
 var inflect = require("inflect");
 var parse = require("url").parse;
 
-require("./util");
-
 /**
  * Router
  */
@@ -171,7 +169,7 @@ var Router = (function () {
     var fullPath = this._path;
 
     if ("undefined" === typeof routes) {
-      routes = emptyFunction;
+      routes = noop;
     }
 
     if ("function" === typeof options) {
@@ -189,13 +187,13 @@ var Router = (function () {
 
     if (only.length) {
       methods = methods.filter(function (method) {
-        return only.includes(method);
+        return includes(only, method);
       });
     }
 
     if (except.length) {
       methods = methods.filter(function (method) {
-        return !except.includes(method);
+        return !includes(except, method);
       });
     }
 
@@ -207,13 +205,13 @@ var Router = (function () {
     }
 
     // define CRUD methods
-    if (methods.includes("index")) this.get(pluralName, "" + pluralName + "#index");
-    if (methods.includes("new")) this.get("" + pluralName + "/new", "" + pluralName + "#new");
-    if (methods.includes("edit")) this.get("" + pluralName + "/:" + singularName + "_id/edit", "" + pluralName + "#edit");
-    if (methods.includes("show")) this.get("" + pluralName + "/:" + singularName + "_id", "" + pluralName + "#show");
-    if (methods.includes("create")) this.post(pluralName, "" + pluralName + "#create");
-    if (methods.includes("update")) this.put("" + pluralName + "/:" + singularName + "_id", "" + pluralName + "#update");
-    if (methods.includes("destroy")) this["delete"]("" + pluralName + "/:" + singularName + "_id", "" + pluralName + "#destroy");
+    if (includes(methods, "index")) this.get(pluralName, "" + pluralName + "#index");
+    if (includes(methods, "new")) this.get("" + pluralName + "/new", "" + pluralName + "#new");
+    if (includes(methods, "edit")) this.get("" + pluralName + "/:" + singularName + "_id/edit", "" + pluralName + "#edit");
+    if (includes(methods, "show")) this.get("" + pluralName + "/:" + singularName + "_id", "" + pluralName + "#show");
+    if (includes(methods, "create")) this.post(pluralName, "" + pluralName + "#create");
+    if (includes(methods, "update")) this.put("" + pluralName + "/:" + singularName + "_id", "" + pluralName + "#update");
+    if (includes(methods, "destroy")) this["delete"]("" + pluralName + "/:" + singularName + "_id", "" + pluralName + "#destroy");
 
     // add /resource/:resource_id to the path
     // add separately, because :resource_id
@@ -271,18 +269,13 @@ var Router = (function () {
         throw new Error("Router does not have a dispatch function.");
       }
 
-      var result = router.resolve(this.method, this.url);
+      var route = router.resolve(this.method, this.url);
 
-      if (!result) {
+      if (!route) {
         this.status = 404;
         yield next;
         return;
       }
-
-      var route = result.route;
-      var params = result.params;
-
-      this.params = params;
 
       yield router._dispatch.call(this, route, this);
     };
@@ -311,9 +304,10 @@ var Router = (function () {
           route.keys.forEach(function (key, i) {
             return params[key] = params[i];
           });
+          route.params = params;
 
           return {
-            v: { route: route, params: params }
+            v: route
           };
         }
       })();
@@ -327,7 +321,15 @@ var Router = (function () {
   return Router;
 })();
 
-var emptyFunction = function emptyFunction() {};
+var noop = function noop() {};
+
+/**
+ * Helpers
+ */
+
+function includes(arr, el) {
+  return arr.indexOf(el) >= 0;
+}
 
 /**
  * Expose Router
